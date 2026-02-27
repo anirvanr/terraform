@@ -155,3 +155,24 @@ I will use Terratest (Go) or terraform-exec for integration tests, tflint/tfsec/
 34. **You want to implement custom variable validation. What do you do?**  
 **Answer:**  
 I will use validation blocks with conditions/regex (Terraform 0.13+), or custom null_resource preconditions.
+
+35. **How do you handle or prevent manual modification done outside your Terraform code?**
+
+**Answer:**
+- Restrict Console & CLI Write Access:
+  - Developers get ReadOnlyAccess for troubleshooting.
+  - Use Service Control Policies (SCPs) in AWS Organizations to enforce guardrails.
+  - Use AWS Config or IAM policies to deny resource creation unless it has a tag like ManagedBy: Terraform
+- Terraform Cloud/Enterprise Features:
+  - Use remote state locking to prevent concurrent modifications
+  - Implement policy-as-code with Sentinel or OPA
+  - Set up workspace permissions and approval workflows
+- Terraform Drift Detection:
+  - Run terraform plan regularly to detect differences between your state and actual infrastructure
+  - Use terraform refresh to update state file with current resource status
+  - Implement automated drift detection in CI/CD pipelines (daily or after each manual change window)
+- AWS Config Rules:
+  - Set up AWS Config to track resource configuration changes
+  - Create custom rules to alert on modifications to Terraform-managed resources
+  - Use Config's timeline feature to see who changed what and when
+
