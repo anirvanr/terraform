@@ -114,9 +114,7 @@ output "my_vpc_id" {
 - In teams: In remote backends like S3, Azure Storage, GCS, Terraform Cloud, etc.
 
 
-# **Common Terraform State Commands**
-
-## **1. `terraform state list`**
+### Common Terraform State Commands
 
 Shows all resources tracked in the Terraform state file.
 
@@ -124,19 +122,11 @@ Shows all resources tracked in the Terraform state file.
 terraform state list
 ```
 
----
-
-## **2. `terraform state show`**
-
 Shows detailed information about a specific resource in the state.
 
 ```sh
 terraform state show aws_instance.web
 ```
-
----
-
-## **3. `terraform state mv`**
 
 Moves (renames) a resource inside the state file.
 
@@ -144,19 +134,11 @@ Moves (renames) a resource inside the state file.
 terraform state mv aws_s3_bucket.old aws_s3_bucket.new
 ```
 
----
-
-## **4. `terraform state rm`**
-
 Removes a resource from the state file **without deleting it in the cloud**.
 
 ```sh
 terraform state rm aws_s3_bucket.demo
 ```
-
----
-
-## **5. `terraform state pull`**
 
 Downloads/prints the current state from the backend.
 
@@ -164,18 +146,12 @@ Downloads/prints the current state from the backend.
 terraform state pull
 ```
 
----
-
-## **6. `terraform state push`**
-
 Uploads a local state file to the remote backend.
 *(Use very carefully.)*
 
 ```sh
 terraform state push terraform.tfstate
 ```
-
----
 
 ## **7. `terraform refresh`** *(older versions)*
 
