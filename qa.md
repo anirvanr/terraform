@@ -153,8 +153,6 @@ Uploads a local state file to the remote backend.
 terraform state push terraform.tfstate
 ```
 
-## **7. `terraform refresh`** *(older versions)*
-
 Updates the state with real infrastructure values.
 
 ```sh
