@@ -176,3 +176,64 @@ I will use validation blocks with conditions/regex (Terraform 0.13+), or custom 
   - Create custom rules to alert on modifications to Terraform-managed resources
   - Use Config's timeline feature to see who changed what and when
 
+36. **How do you manage multiple environments (dev, staging, QA, prod, etc.)**
+**Answer:**
+
+Separate folders for each environment, shared modules.
+```
+infra/
+├── modules/
+│   └── vpc/
+│       ├── main.tf
+│       ├── variables.tf
+│   ├── ec2/
+│   └── rds/
+├── envs/
+│   ├── dev/
+│   │   ├── main.tf
+│   │   ├── variables.tf
+│   │   └── terraform.tfvars
+│   ├── staging/
+│   │   └── ...
+│   └── prod/
+│       └── ...
+```
+Each env calls the same modules with different values.
+
+## modules/vpc/variables.tf
+```
+variable "vpc_cidr" {
+  type = string
+}
+```
+
+## modules/vpc/main.tf
+```
+resource "aws_vpc" "this" {
+  cidr_block = var.vpc_cidr
+
+  tags = {
+    Name = "example-vpc"
+  }
+}
+```
+
+## envs/dev/main.tf
+```
+provider "aws" {
+  region = "us-east-1"
+}
+
+module "vpc" {
+  source    = "../../modules/vpc"
+  vpc_cidr  = var.vpc_cidr
+}
+```
+
+## envs/dev/terraform.tfvars
+```
+vpc_cidr = "10.0.0.0/16"
+```
+
+
+
