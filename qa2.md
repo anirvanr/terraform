@@ -177,6 +177,7 @@ I will use validation blocks with conditions/regex (Terraform 0.13+), or custom 
   - Use Config's timeline feature to see who changed what and when
 
 36. **How do you manage multiple environments (dev, staging, QA, prod, etc.)**
+
 **Answer:**
 
 Separate folders for each environment, shared modules.
@@ -200,14 +201,14 @@ infra/
 ```
 Each env calls the same modules with different values.
 
-## modules/vpc/variables.tf
+**modules/vpc/variables.tf**
 ```
 variable "vpc_cidr" {
   type = string
 }
 ```
 
-## modules/vpc/main.tf
+**modules/vpc/main.tf**
 ```
 resource "aws_vpc" "this" {
   cidr_block = var.vpc_cidr
@@ -218,7 +219,7 @@ resource "aws_vpc" "this" {
 }
 ```
 
-## envs/dev/main.tf
+**envs/dev/main.tf**
 ```
 provider "aws" {
   region = "us-east-1"
@@ -230,10 +231,49 @@ module "vpc" {
 }
 ```
 
-## envs/dev/terraform.tfvars
+**envs/dev/terraform.tfvars**
 ```
 vpc_cidr = "10.0.0.0/16"
 ```
 
+Each environment (dev, staging, prod) should have its own isolated state, usually stored in an S3 backend with a DynamoDB lock table.
+Example: **envs/dev/backend.tf**
+```
+terraform {
+  backend "s3" {
+    bucket         = "my-tf-state-bucket"
+    key            = "dev/terraform.tfstate"
+    region          = "us-east-1"
+    dynamodb_table = "terraform-locks"
+    encrypt        = true
+  }
+}
+```
+For staging (**envs/staging/backend.tf**):
+```
+terraform {
+  backend "s3" {
+    bucket         = "my-tf-state-bucket"
+    key            = "staging/terraform.tfstate"
+    region          = "us-east-1"
+    dynamodb_table = "terraform-locks"
+    encrypt        = true
+  }
+}
+```
+From each env folder:
 
+**DEV:**
+```
+cd infra/envs/dev
+terraform init
+terraform apply
+```
+**STAGING:**
+```
+cd infra/envs/staging
+terraform init
+terraform apply
+```
 
+Each terraform init downloads its own remote state file.
