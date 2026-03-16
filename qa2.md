@@ -277,3 +277,39 @@ terraform apply
 ```
 
 Each terraform init downloads its own remote state file.
+
+37. **How do you manage Terraform code for multi-account or multi-environment deployments?**
+
+I use a modular architecture with reusable modules and separate environment folders (e.g., dev, stage, prod).
+Each environment has its own backend state and variables.
+Access to accounts is handled via assume-role, and state is stored in remote backends like S3 + DynamoDB for locking.
+CI/CD pipelines deploy per environment.
+
+38. **What strategies do you use to avoid Terraform state file corruption?**
+
+- Always use a remote backend (S3, GCS, Terraform Cloud).
+- Enable state locking (DynamoDB table, GCS locking, etc.).
+- Avoid manual edits to state.
+- Use terraform import, not manual state hacking.
+- Restrict state access with IAM and encryption.
+
+39. **How do you handle Terraform drift detection and remediation?**
+`terraform plan -detailed-exitcode`
+in CI.
+`Exit code 2` indicates drift.
+Auto-remediation options:
+- Push desired state from Git (preferred GitOps approach).
+- Sometimes I fix the differences by hand. I check what changed in the cloud compared to my Terraform code, and then update either the code or the actual resources so that both match again.
+
+40. **How do you manage secrets in Terraform?**
+
+Best practices:
+- Never store secrets in terraform.tfvars or code
+- Use data sources such as:
+  - AWS SSM Parameter Store (secure string)
+  - AWS Secrets Manager
+  - Vault
+- CI/CD injects runtime secrets
+- Enable encryption at rest in backends
+- Use `sensitive = true` on variables + outputs
+
