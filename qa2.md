@@ -313,3 +313,30 @@ Best practices:
 - Enable encryption at rest in backends
 - Use `sensitive = true` on variables + outputs
 
+41. **What is the purpose of the lifecycle block in a Terraform resource?**
+
+It controls how Terraform manages resources during creation, updates, and deletion.
+```
+resource "aws_instance" "example" {
+  ami           = "ami-123456"
+  instance_type = "t2.micro"
+
+  lifecycle {
+    create_before_destroy = true
+    prevent_destroy       = true
+    ignore_changes        = [tags]
+  }
+}
+```
+- `create_before_destroy`: Creates the new resource first, then deletes the old one (Helps achieve zero downtime)
+- `prevent_destroy`: Prevents accidental deletion of a resource. Terraform will throw an error if destruction is attempted (Databases, production resources)
+- `ignore_changes`: Tells Terraform to ignore specific attribute changes - useful when attributes are modified outside Terraform
+  - Problem: Urgent manual changes made in production
+  - Example: Changing instance size or config temporarily
+```
+lifecycle {
+  ignore_changes = [instance_type]
+}
+```
+👉 Keeps Terraform from reverting emergency fixes
+
