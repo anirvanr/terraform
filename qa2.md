@@ -340,3 +340,14 @@ lifecycle {
 ```
 👉 Keeps Terraform from reverting emergency fixes
 
+43. **Tell me key differences between terraform and ansible**
+
+| Feature | Terraform | Ansible |
+|--------|-----------|---------|
+| Primary Purpose | Infrastructure provisioning and lifecycle management (Day 0 operations). | Configuration management and application deployment (Day 1 and Day 2 operations). |
+| Approach | Declarative: Defines the desired end-state, and Terraform determines how to achieve it. | Procedural (Imperative): Defines a sequence of step-by-step tasks to be executed. |
+| State Management | Stateful: Uses a state file to track the current state of the infrastructure and detect discrepancies (drift). | Stateless by default: Relies on idempotency (running a task multiple times yields the same result) and directly queries the target system to check the current state. |
+| Infrastructure | Prefers immutable infrastructure (replaces resources when changes are needed). | Designed for mutable infrastructure (makes in-place changes to existing systems). |
+| Language | HashiCorp Configuration Language (HCL) or JSON. | YAML playbooks, known for simplicity and readability. |
+| Communication | Communicates with cloud provider APIs. | Uses SSH or WinRM to communicate with managed nodes. |
+
