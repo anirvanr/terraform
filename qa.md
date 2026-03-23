@@ -53,7 +53,23 @@ A backend defines where Terraform’s state is stored, such as locally or remote
 ### What is the purpose of the terraform import command?
 It brings existing infrastructure into Terraform management by importing resources into the state file.
 ### What is a data source?
-A data source in Terraform is a way to query and retrieve information from outside Terraform—such as from a cloud provider, another Terraform state, or an external service—without creating or modifying any resources.
+Data sources fetch data from the provider, but do not create or modify resources.
+Fetch an existing VPC by name
+```
+data "aws_vpc" "selected" {
+  filter {
+    name   = "tag:Name"
+    values = ["my-vpc"]
+  }
+}
+```
+Use the VPC ID in a subnet resource
+```
+resource "aws_subnet" "example" {
+  vpc_id     = data.aws_vpc.selected.id
+  cidr_block = "10.0.1.0/24"
+}
+```
 ### Is every Terraform configuration a module?
 Yes. Even if you write one .tf file, it is still a root module.
 ### Difference between root module and child module.
